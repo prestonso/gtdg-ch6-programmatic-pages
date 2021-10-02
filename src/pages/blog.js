@@ -10,7 +10,11 @@ const BlogPage = ({ data }) => (
     <h1>Blog</h1>
     {data.allMarkdownRemark.edges.map( ({ node }) => (
       <div key={node.id}>
-        <h2>{node.frontmatter.title}</h2>
+        <h2>
+          <Link to={`/blog${node.fields.slug}`}>
+            {node.frontmatter.title}
+          </Link>
+        </h2>
         <p>{node.excerpt}</p>
         <p><em>{node.frontmatter.date}</em></p>
       </div>
@@ -33,6 +37,9 @@ export const query = graphql`
           frontmatter {
             date(fromNow: true)
             title
+          }
+          fields {
+            slug
           }
           excerpt
         }
