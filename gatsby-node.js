@@ -5,6 +5,7 @@
  */
 
 // You can delete this file if you're not using it
+const path = require(`path`)
 const { createFilePath } = require(`gatsby-source-filesystem`)
 
 exports.onCreateNode = ({ node, getNode, actions }) => {
@@ -17,4 +18,31 @@ exports.onCreateNode = ({ node, getNode, actions }) => {
       value: slug,
     })
   }
+}
+
+exports.createPages = async ({ graphql, actions }) => {
+  const { createPage } = actions
+  const result = await graphql(`
+    {
+      allMarkdownRemark {
+        edges {
+          node {
+            fields {
+              slug
+            }
+          }
+        }
+      }
+    }
+  `)
+
+  result.data.allMarkdownRemark.edges.forEach( ({ node }) => {
+    createPage({
+      path: `/blog` + node.fields.slug,
+      component: path.resolve(`./src/templates/post.js`),
+      context: {
+        slug: node.fields.slug,
+      },
+    })
+  })
 }
